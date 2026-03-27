@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "53180e17623e1e7f59fdef0395e52fe15700732d",
-    "message": "chore(AndroidManifest): Remove BIND_MEDIA_BROWSER_SERVICE permission from MusicService #390"
+    "sha": "5a412deba895d65c757e26f4dc890fa4088ac81f",
+    "message": "Merge pull request #403 from koiverse/renovate/workmanager\n\nfix(deps): update dependency androidx.work:work-runtime-ktx to v2.11.2"
   }
 }
