@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "5a412deba895d65c757e26f4dc890fa4088ac81f",
-    "message": "Merge pull request #403 from koiverse/renovate/workmanager\n\nfix(deps): update dependency androidx.work:work-runtime-ktx to v2.11.2"
+    "sha": "c85ce0085fddb150fa8765da01b6a5b4887b1298",
+    "message": "fix(MiniPlayer): Simplify content description logic for play/pause state"
   }
 }
