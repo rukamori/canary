@@ -1,0 +1,58 @@
+name: 🔨 Build Failure Report
+description: Automated report for nightly build failure
+labels: [build-failure, automated]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 🔨 Automated Nightly Build Failure Report
+        
+        This issue was automatically created by the Nightly Build workflow.
+
+  - type: input
+    id: build_id
+    attributes:
+      label: Build Run ID
+      description: GitHub Actions workflow run ID
+      placeholder: e.g., 1234567890
+    validations:
+      required: true
+
+  - type: input
+    id: failed_abi
+    attributes:
+      label: Failed ABI(s)
+      description: Which ABI(s) failed to build
+      placeholder: e.g., arm64, armeabi, x86, x86_64, universal
+    validations:
+      required: true
+
+  - type: input
+    id: build_date
+    attributes:
+      label: Build Date
+      description: When did this build fail
+      placeholder: e.g., 2026-03-29
+    validations:
+      required: true
+
+  - type: textarea
+    id: build_logs
+    attributes:
+      label: Build Logs (All Attempts)
+      description: Complete build output from all attempts
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: build_summary
+    attributes:
+      label: Build Summary
+      description: Summary of what failed
+      placeholder: |
+        - Workflow Run: 
+        - Commit: 
+        - Attempts: 3
+    validations:
+      required: true
