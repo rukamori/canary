@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "d0550c56a974fff573478bd83ed661e6ddf55281",
-    "message": "feat(YouTube): add login context checks and setLogin parameter to player #418"
+    "sha": "abc3534110e8ed7f7bef6b50b06ac7bdf8fd5212",
+    "message": "chore(MainActivity): migrate floating action to old navbar"
   }
 }
