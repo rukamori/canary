@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "bbdc2dea01145d2feb669b2d9cefd3748936e395",
-    "message": "fix(SelectionSongsMenu): optimize song liking logic and improve transaction handling"
+    "sha": "36f764e00d428613c5403a7e91478ca03c5f8c75",
+    "message": "refactor(Items.kt): refactor LibraryPlaylistFeatureCard layout and typography"
   }
 }
