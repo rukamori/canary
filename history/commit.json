@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "83eb5d26caffba90b17b8ab23586b42a4a4a7261",
-    "message": "Adjust padding in Items.kt component"
+    "sha": "6341eb8fc4552257272f00021892b14fd5b4051b",
+    "message": "feat(CrossfadeAudioProcessor): migrate back from CrossfadeAudio to CrossfadeAudioProcessor #445"
   }
 }
