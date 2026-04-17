@@ -6,6 +6,11 @@ on:
     types:
       - completed
   workflow_dispatch:  # Allow manual trigger
+  push:
+    branches:
+      - main
+    paths:
+      - temp/README.md  # Only trigger on changes to this file
 
 permissions:
   contents: write
