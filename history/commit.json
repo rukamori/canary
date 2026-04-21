@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "52b80e6177d046339f7c69857d0ca3eb4fc53af1",
-    "message": "fix(MoodAndGenresScreen): replace matchParentSize with fillMaxSize for better layout handling"
+    "sha": "89ecb1ff73755511837ea4d569eef7e0ea6d2467",
+    "message": "fix(MoodAndGenresScreen): increase button sizes for improved touch targets"
   }
 }
