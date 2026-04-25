@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "904ce4a4f091d5881adbaa604f16410238e99e51",
-    "message": "Merge pull request #496 from koiverse/renovate/compose\n\nfix(deps): update compose to v1.12.0-alpha01"
+    "sha": "9f79fd32ede2294e829be344d57327ac9b196143",
+    "message": "fix(build): update base32 command to prevent line wrapping in build suffix"
   }
 }
