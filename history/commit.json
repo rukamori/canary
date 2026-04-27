@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "9f79fd32ede2294e829be344d57327ac9b196143",
-    "message": "fix(build): update base32 command to prevent line wrapping in build suffix"
+    "sha": "d698ece98b4c77730097965db7586c399280c281",
+    "message": "Merge pull request #516 from sang765/lyrics/paxsenix\n\nfeat(Lyric): Enhance Paxsenix integration with new providers and API stats"
   }
 }
