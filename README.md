@@ -19,7 +19,7 @@
 
 <div align="center">
 
-[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/4.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/7.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
+[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/4.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/8.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
 
 | Stable | Nightly |
 |----------|---------|
@@ -48,6 +48,15 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
   </picture>
 
   <h1>ArchiveTune</h1>
+
+  <p align="center">
+    <a href="README.md">
+      <img src="https://img.shields.io/badge/🇺🇸%20English-6366f1?style=for-the-badge&labelColor=1e1e2e" />
+    </a>
+    <a href="README_JA.md">
+      <img src="https://img.shields.io/badge/🇯🇵%20日本語-6366f1?style=for-the-badge&labelColor=1e1e2e" />
+    </a>
+  </p>
 
   <p align="center">
     <strong>Redefining the YouTube Music Experience on Android.</strong>
