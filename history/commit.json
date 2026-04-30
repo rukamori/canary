@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "3dd1f18491b8999fdf6101ea3638e0308263499b",
-    "message": "refactor(MusicService): streamline notification handling and remove deprecated notification creation logic"
+    "sha": "63dc8a66ce7504f94b6bd6b09c22f0d02cd0f501",
+    "message": "refactor(MusicService): integrate queue and player state persistence logic #489"
   }
 }
