@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "63dc8a66ce7504f94b6bd6b09c22f0d02cd0f501",
-    "message": "refactor(MusicService): integrate queue and player state persistence logic #489"
+    "sha": "3e586a6faa9c2784d36dd5293386a895aff7a0d8",
+    "message": "refactor(Theme): integrate color scheme management and enhance dynamic theming support"
   }
 }
