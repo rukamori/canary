@@ -15,11 +15,14 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
     steps:
       - name: 🔎 Checkout
         uses: actions/checkout@v6.0.2
         with:
           token: ${{ secrets.PAT_TOKEN || github.token }}
+          persist-credentials: true
 
       # Setup Java for Kotlin changelog generation
       - name: ☕ Setup Java
@@ -85,7 +88,20 @@ jobs:
         run: |
           git config --global user.name '${{ github.actor }}'
           git config --global user.email '${{ github.actor }}@users.noreply.github.com'
+          
+          # Check if there are changes to commit
+          if git diff --quiet && git diff --cached --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          
           git add history/commit.json
-          git commit -m "chore: update history pointer [skip ci]" || echo "No changes to commit"
-          git pull --rebase origin main
-          git push
+          git commit -m "chore: update history pointer [skip ci]"
+          
+          # Pull latest changes to avoid conflicts
+          git pull --rebase origin ${{ github.ref_name }} || git pull --rebase origin main
+          
+          # Push changes
+          git push origin HEAD:${{ github.ref_name }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
