@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "f4286d3df52c154ba642ae3e002478e5ec839f82",
-    "message": "fix(AccountSettings): enable clearing web auth session when forgetting account"
+    "sha": "5be55b4e31e8d84f2275013899a3cf117b4c4565",
+    "message": "feat(HomeViewModel): integrate switchToAccount method for account switching with optional sync"
   }
 }
