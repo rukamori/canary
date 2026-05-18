@@ -5,6 +5,7 @@ on:
     workflows: ["Update Release Notes", "update-release-notes"]
     types:
       - completed
+  workflow_dispatch: 
 
 jobs:
   notify:
