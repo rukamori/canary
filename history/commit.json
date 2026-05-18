@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "5be55b4e31e8d84f2275013899a3cf117b4c4565",
-    "message": "feat(HomeViewModel): integrate switchToAccount method for account switching with optional sync"
+    "sha": "01a4ef6705fa325e1eb3b9d20c3d6ede547b3729",
+    "message": "fix(NewReleaseScreen): decrease margin between section"
   }
 }
