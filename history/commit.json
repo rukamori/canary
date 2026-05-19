@@ -2,7 +2,7 @@
   "commit": {
     "repository": "koiverse/ArchiveTune",
     "branch": "dev",
-    "sha": "01a4ef6705fa325e1eb3b9d20c3d6ede547b3729",
-    "message": "fix(NewReleaseScreen): decrease margin between section"
+    "sha": "71183718cb7bcec84eff6e35dd943dd10ee2e63d",
+    "message": "refactor(Preference): simplify rememberPreferenceIconShape function"
   }
 }
