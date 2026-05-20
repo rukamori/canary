@@ -21,7 +21,7 @@
 
 <div align="center">
 
-[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/5.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/1.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/8.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
+[![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/6.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/5.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/2.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest) [![Download](https://rule34.xxx/counter/0.gif)](https://github.com/sang765/ArchiveTune-Nightly/releases/latest)
 
 | Stable | Nightly |
 |----------|---------|
@@ -482,6 +482,7 @@ Before initiating a Pull Request, every contributor must run the following quali
 | `TOGETHER_BEARER_TOKEN` | Token for online music Together. Private and only @koiverse know it |
 | `CANVAS_BEARER_TOKEN` | Token for canvas, only @koiverse know |
 | `PAT_TOKEN` | GitHub [Personal Access Token](https://github.com/settings/personal-access-token) with `Actions` (trigger/run workflows), `Contents` (commit, push, create release), and optionally `Workflows` (cancel failed builds) permissions. |
+| `APP_UPDATE_PAT` | Github PAT for bypass Github rate limit with `Contents` and `Metadata` read-only |
 
 ---
 
