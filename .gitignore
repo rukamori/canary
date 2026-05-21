@@ -132,3 +132,9 @@ package-lock.json
 ## Kotlinc test file for script
 kotlinc/
 kotlin.zip
+
+# gemini-cli settings
+.gemini/
+
+# GitHub App credentials
+gha-creds-*.json
