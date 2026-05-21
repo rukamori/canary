@@ -125,8 +125,6 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
     
     sb.append("Release **ArchiveTune Nightly** artifact, generated on **$timestamp (UTC +0)**\n")
     sb.append("\n")
-    sb.append("## ✨ Changelog\n")
-    sb.append("\n")
     
     // The GitHub API returns the commit order from oldest to newest in the compare view.
     // We reverse the order to display the newest commit at the top.
@@ -137,6 +135,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
         .withZone(ZoneId.of("UTC")) // Timezone
 
     val authorCommitCounts = mutableMapOf<String, Int>()
+    val changelogEntries = StringBuilder()
 
     for (commit in commitList) {
         try {
@@ -213,7 +212,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             }
 
             // Create log line
-            sb.append("- `$date`: [`${sha.take(7)}`](https://github.com/koiverse/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
+            changelogEntries.append("- `$date`: [`${sha.take(7)}`](https://github.com/koiverse/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
             e.printStackTrace()
@@ -226,7 +225,6 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
         val sortedAuthors = authorCommitCounts.entries.sortedByDescending { it.value }
         val topAuthor = sortedAuthors.first()
         
-        sb.append("\n")
         sb.append("## 🏆 MVP Committer\n")
         sb.append("\n")
         sb.append("Congratulations to **@${topAuthor.key}** for contributing **${topAuthor.value}** commit(s) in this release! 🎉\n")
@@ -245,7 +243,12 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 sb.append("$medal **@${entry.key}**: ${entry.value} commit(s)\n")
             }
         }
+        sb.append("\n")
     }
+
+    sb.append("## ✨ Changelog\n")
+    sb.append("\n")
+    sb.append(changelogEntries.toString())
     
     return sb.toString()
 }
