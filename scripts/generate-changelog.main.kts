@@ -95,14 +95,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
     
     // Check if commits is empty
     if (commits.size() == 0) {
-        // Generate timestamp
-        val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss")
-            .withZone(ZoneId.of("UTC"))
-        val timestamp = formatter.format(Instant.now())
-        
         return buildString {
-            append("Release **ArchiveTune Nightly** artifact, generated on **$timestamp (UTC +0)**\n")
-            append("\n")
             append("## ✨ Changelog\n")
             append("\n")
             append("No new commits found... Wait the hold up? Huh? No commit found but why this release still create?\n")
@@ -112,19 +105,8 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             append("```bash\n")
             append(logOutput)
             append("```\n")
-            append("\n")
-            append("> [!NOTE]  \n")
-            append("> If this version broken something, you can create this [issue](https://github.com/sang765/ArchiveTune-Nightly/issues/new?template=report-version-broken.yml). Thanks you.")
         }
     }
-    
-    // Generate timestamp
-    val formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd - HH:mm:ss")
-        .withZone(ZoneId.of("UTC"))
-    val timestamp = formatter.format(Instant.now())
-    
-    sb.append("Release **ArchiveTune Nightly** artifact, generated on **$timestamp (UTC +0)**\n")
-    sb.append("\n")
     
     // The GitHub API returns the commit order from oldest to newest in the compare view.
     // We reverse the order to display the newest commit at the top.

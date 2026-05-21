@@ -40,11 +40,7 @@ jobs:
 
       - name: 🗓️ Get Date
         id: date
-        run: echo "date=$(date +'%Y/%m/%d')" >> $GITHUB_OUTPUT
-
-      - name: ⏳ Get Time
-        id: time
-        run: echo "time=$(date +'%I:%M:%S %p')" >> $GITHUB_OUTPUT
+        run: echo "date=$(date -u +'%Y/%m/%d - %H:%M:%S')" >> $GITHUB_OUTPUT
 
       - name: 📃 Read changelog
         id: changelog
@@ -135,10 +131,13 @@ jobs:
         env:
           SUMMARY: ${{ steps.ai_summary.outputs.summary }}
           CHANGELOG: ${{ steps.changelog.outputs.changelog }}
+          DATE: ${{ steps.date.outputs.date }}
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
         run: |
+          echo "Release **ArchiveTune Nightly** artifact, generated on **$DATE (UTC +0)**" > release_body.md
+          echo "" >> release_body.md
           if [ -n "$SUMMARY" ]; then
-            echo "$SUMMARY" > release_body.md
+            echo "$SUMMARY" >> release_body.md
             echo "" >> release_body.md
           fi
           echo "$CHANGELOG" >> release_body.md
