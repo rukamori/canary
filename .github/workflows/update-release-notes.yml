@@ -56,19 +56,65 @@ jobs:
             echo "EOF"
           } >> $GITHUB_OUTPUT
 
-      - name: 🔄 Update release notes
+      - name: 🤖 AI Summarize
+        id: ai_summary
+        if: env.GEMINI_API_KEY != ''
         run: |
-          BODY=$(cat << 'EOF'
-          ${{ steps.changelog.outputs.changelog }}
+          # Escape changelog for JSON
+          ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
           
-          > [!NOTE]  
-          > If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you.
-          EOF
-          )
+          # Prepare prompt
+          PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note. 
+          Use categories like ✨ Features, 🐞 Bug Fixes, 🚀 Improvements, and 🧹 Refactor. 
+          Keep it concise and highlight the most important changes.
           
-          gh release edit ${{ github.event.client_payload.new_version || github.event.inputs.new_version || 'nightly-latest' }} --notes "$BODY"
+          Commits:
+          $ESCAPED_CHANGELOG"
+          
+          # Call Gemini API
+          RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=$GEMINI_API_KEY" \
+            -H 'Content-Type: application/json' \
+            -d "{
+              \"contents\": [{
+                \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
+              }]
+            }")
+          
+          # Extract text from response
+          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+          
+          if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
+            echo "AI summarization failed or returned empty. Response: $RESPONSE"
+            echo "summary=" >> $GITHUB_OUTPUT
+          else
+            {
+              echo "summary<<EOF"
+              echo "## 🤖 AI Summary"
+              echo "$AI_TEXT"
+              echo ""
+              echo "---"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+          fi
         env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+      - name: 🔄 Update release notes
+        env:
+          SUMMARY: ${{ steps.ai_summary.outputs.summary }}
+          CHANGELOG: ${{ steps.changelog.outputs.changelog }}
           GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
+        run: |
+          if [ -n "$SUMMARY" ]; then
+            echo "$SUMMARY" > release_body.md
+            echo "" >> release_body.md
+          fi
+          echo "$CHANGELOG" >> release_body.md
+          echo "" >> release_body.md
+          echo "> [!NOTE]" >> release_body.md
+          echo "> If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you." >> release_body.md
+          
+          gh release edit ${{ github.event.client_payload.new_version || github.event.inputs.new_version || 'nightly-latest' }} --notes-file release_body.md
 
       - name: 🔄 Update history
         run: |
