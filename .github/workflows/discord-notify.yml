@@ -22,13 +22,13 @@ jobs:
       - name: Wait for release to be available
         run: |
           # Give GitHub API a moment to process the new release
-          sleep 5
+          sleep 3
 
       - name: Get latest release
         id: get_release
         run: |
           # Fetch the latest release
-          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN || github.token }}" \
+          LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
           
           # Check if we got an error response
@@ -38,10 +38,9 @@ jobs:
             exit 1
           fi
           
-          # Extract the name, tag and body
+          # Extract the name and tag
           VERSION_TITLE=$(echo "$LATEST_RELEASE" | jq -r '.name')
           RELEASE_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
-          RELEASE_BODY=$(echo "$LATEST_RELEASE" | jq -r '.body')
           
           # Validate that we got valid data
           if [ -z "$VERSION_TITLE" ] || [ "$VERSION_TITLE" = "null" ]; then
@@ -57,102 +56,20 @@ jobs:
           # Set outputs
           echo "version_title=$VERSION_TITLE" >> $GITHUB_OUTPUT
           echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
-          {
-            echo "release_body<<EOF"
-            echo "$RELEASE_BODY"
-            echo "EOF"
-          } >> $GITHUB_OUTPUT
           
           echo "✓ Successfully retrieved release: $VERSION_TITLE ($RELEASE_TAG)"
-
-      - name: 🤖 Summarize for Discord
-        id: ai_summary
-        if: secrets.GEMINI_API_KEY != ''
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          RELEASE_BODY: ${{ steps.get_release.outputs.release_body }}
-          VERSION_TITLE: ${{ steps.get_release.outputs.version_title }}
-        run: |
-          # Escape release body for JSON
-          ESCAPED_BODY=$(echo "$RELEASE_BODY" | jq -Rs .)
-          
-          # Prepare prompt
-          PROMPT="Create a short and engaging Discord announcement for the new release of ArchiveTune Nightly: $VERSION_TITLE.
-          Use the following release notes to highlight key changes:
-          $ESCAPED_BODY
-          
-          Requirements:
-          1. Start with a catchy title using '#' (e.g., # 🚀 New ArchiveTune Nightly Update!).
-          2. Use emojis to make it visually appealing.
-          3. Summarize the most important features or fixes in a few bullet points.
-          4. Keep it under 1600 characters.
-          5. Do not include download links or mentions in your response."
-          
-          # Call Gemini API with retry logic
-          MAX_RETRIES=3
-          RETRY_COUNT=0
-          WAIT_TIME=15
-          
-          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GEMINI_API_KEY" \
-              -H 'Content-Type: application/json' \
-              -d "{
-                \"contents\": [{
-                  \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
-                }]
-              }")
-            
-            # Check for error in response
-            ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
-            
-            if [ -z "$ERROR" ]; then
-              break
-            fi
-            
-            if echo "$RESPONSE" | jq -e '.error.code == 429' > /dev/null; then
-              echo "Rate limit exceeded (429). Retrying in ${WAIT_TIME}s... (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
-              sleep $WAIT_TIME
-              RETRY_COUNT=$((RETRY_COUNT + 1))
-              WAIT_TIME=$((WAIT_TIME * 2))
-            else
-              echo "API Error: $ERROR"
-              break
-            fi
-          done
-          
-          # Extract text from response
-          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
-          
-          if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
-            echo "AI summarization failed or returned empty. Response: $RESPONSE"
-            echo "summary=" >> $GITHUB_OUTPUT
-          else
-            {
-              echo "summary<<EOF"
-              echo "$AI_TEXT"
-              echo "EOF"
-            } >> $GITHUB_OUTPUT
-          fi
 
       - name: Send Discord notification
         run: |
           VERSION_TITLE="${{ steps.get_release.outputs.version_title }}"
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
-          AI_SUMMARY="${{ steps.ai_summary.outputs.summary }}"
           
-          if [ -n "$AI_SUMMARY" ]; then
-            MESSAGE="$AI_SUMMARY
+          # Construct the message
+          MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
           
-> - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
-> - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
-          else
-            # Fallback to original message if AI fails
-            MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
-          
-> - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
-> - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
-> - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
-          fi
+          > - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
+          > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
+          > - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
           
           # Create JSON payload using jq to avoid escaping issues
           PAYLOAD=$(jq -n --arg msg "$MESSAGE" '{content: $msg}')
