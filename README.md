@@ -570,9 +570,9 @@ You can set 1 second if you can't wait.
 The following fingerprints are for the signing certificate used to sign all ArchiveTune Nightly releases.
 
 ```plaintext
-<!-- CERT_FINGERPRINT_SHA1 -->
+FE:11:C6:9C:1E:20:08:06:79:D7:DD:EE:1B:72:65:A9:4B:68:A1:A4
 ```
 
 ```plaintext
-<!-- CERT_FINGERPRINT_SHA256 -->
+3A:97:D1:35:BC:92:82:8D:13:C3:47:BE:42:48:8C:99:01:DD:A7:11:87:AF:95:E2:F8:A8:F0:96:34:C7:0A:1D
 ```
