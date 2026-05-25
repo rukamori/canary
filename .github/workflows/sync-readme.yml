@@ -50,7 +50,7 @@ jobs:
           echo "Latest version: $VERSION"
           echo "Date digits: $DATE_DIGITS"
           
-          # Generate GIF counter URLs for each digit (without trailing space)
+          # Generate GIF counter URLs for each digit
           GIF_URLS=""
           for i in $(seq 0 7); do
             DIGIT=${DATE_DIGITS:$i:1}
@@ -63,8 +63,11 @@ jobs:
           
           echo "Generated GIF URLs: $GIF_URLS"
           
-          # Replace placeholder in README.md with actual GIF counters
-          sed -i "s|<!-- GIF_COUNTERS:NNNNNNNN -->|$GIF_URLS|g" README.md
+          # Find old GIF counter line and replace with new one
+          OLD_GIF=$(grep '\[!\[Download\](https://rule34.xxx/counter/' README.md | head -1)
+          if [ -n "$OLD_GIF" ]; then
+            sed -i "s|$OLD_GIF|$GIF_URLS|g" README.md
+          fi
           
           # Also update the URL in the link
           sed -i "s|github.com/sang765/ArchiveTune-Nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
@@ -111,8 +114,16 @@ jobs:
           echo "SHA-1:   $SHA1"
           echo "SHA-256: $SHA256"
 
-          sed -i "s|<!-- CERT_FINGERPRINT_SHA1 -->|$SHA1|g" README.md
-          sed -i "s|<!-- CERT_FINGERPRINT_SHA256 -->|$SHA256|g" README.md
+          # Find old SHA-1 and SHA-256 fingerprints in README and replace with new ones
+          OLD_SHA1=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | head -1)
+          OLD_SHA256=$(grep -A1 '```plaintext' README.md | grep -v '```plaintext' | grep -v '^--$' | tail -1)
+
+          if [ -n "$OLD_SHA1" ]; then
+            sed -i "s|$OLD_SHA1|$SHA1|g" README.md
+          fi
+          if [ -n "$OLD_SHA256" ]; then
+            sed -i "s|$OLD_SHA256|$SHA256|g" README.md
+          fi
 
           echo "✅ Updated certificate fingerprints in README.md"
 
