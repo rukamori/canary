@@ -36,7 +36,7 @@ jobs:
         uses: fwilhe2/setup-kotlin@v1.8
 
       - name: 🐘 Generate changelog
-        run: kotlin scripts/generate-changelog.main.kts
+        run: kotlin .github/scripts/generate-changelog.main.kts
         env:
           REPO_PATH: "koiverse/ArchiveTune"
           BRANCH: "dev"
