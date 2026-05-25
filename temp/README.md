@@ -36,22 +36,6 @@ This repository contains the nightly build setup for ArchiveTune, an advanced Yo
 
 <div align="center">
 
-## ℹ️ [ArchiveTune](https://github.com/koiverse/ArchiveTune) [README](https://raw.githubusercontent.com/koiverse/ArchiveTune/main/README.md) ℹ️
-
-</div>
-
-<!-- README.md -->
-
-<div align="center">
-
-## 👥 [ArchiveTune](https://github.com/koiverse/ArchiveTune) [CONTRIBUTING](https://raw.githubusercontent.com/koiverse/ArchiveTune/dev/CONTRIBUTING.md) 👥
-
-</div>
-
-<!-- CONTRIBUTING.md -->
-
-<div align="center">
-
 ## 🛠️ Development Environment 🛠️
 
 </div>
