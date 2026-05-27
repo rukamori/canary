@@ -349,20 +349,17 @@ jobs:
       - name: 📋 Build release body
         id: release_body
         run: |
-          DATE="${{ steps.date.outputs.date }}"
-          SUMMARY="${{ steps.ai_summary.outputs.summary }}"
-          CHANGELOG="${{ steps.changelog.outputs.changelog }}"
+          cat > release_body.md << 'RELEASE_BODY_EOF'
+Release **ArchiveTune Nightly** artifact, generated on **${{ steps.date.outputs.date }} (UTC +0)**
 
-          echo "Release **ArchiveTune Nightly** artifact, generated on **$DATE (UTC +0)**" > release_body.md
-          echo "" >> release_body.md
-          if [ -n "$SUMMARY" ]; then
-            echo "$SUMMARY" >> release_body.md
-            echo "" >> release_body.md
-          fi
-          echo "$CHANGELOG" >> release_body.md
-          echo "" >> release_body.md
-          echo "> [!NOTE]" >> release_body.md
-          echo "> If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you." >> release_body.md
+${{ steps.ai_summary.outputs.summary }}
+
+${{ steps.changelog.outputs.changelog }}
+
+
+> [!NOTE]
+> If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you.
+RELEASE_BODY_EOF
 
       - name: 📦 Create release
         uses: softprops/action-gh-release@v3.0.0
