@@ -19,28 +19,23 @@ jobs:
 
       - name: Wait for release to be available
         run: |
-          # Give GitHub API a moment to process the new release
           sleep 3
 
       - name: Get latest release
         id: get_release
         run: |
-          # Fetch the latest release
           LATEST_RELEASE=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
             https://api.github.com/repos/${{ github.repository }}/releases/latest)
           
-          # Check if we got an error response
           if echo "$LATEST_RELEASE" | jq -e '.message' > /dev/null 2>&1; then
             ERROR_MSG=$(echo "$LATEST_RELEASE" | jq -r '.message')
             echo "Error fetching release: $ERROR_MSG"
             exit 1
           fi
           
-          # Extract the name and tag
           VERSION_TITLE=$(echo "$LATEST_RELEASE" | jq -r '.name')
           RELEASE_TAG=$(echo "$LATEST_RELEASE" | jq -r '.tag_name')
           
-          # Validate that we got valid data
           if [ -z "$VERSION_TITLE" ] || [ "$VERSION_TITLE" = "null" ]; then
             echo "Error: Could not extract version title from release"
             exit 1
@@ -51,28 +46,105 @@ jobs:
             exit 1
           fi
           
-          # Set outputs
           echo "version_title=$VERSION_TITLE" >> $GITHUB_OUTPUT
           echo "release_tag=$RELEASE_TAG" >> $GITHUB_OUTPUT
           
           echo "✓ Successfully retrieved release: $VERSION_TITLE ($RELEASE_TAG)"
 
+      - name: 🤖 Generate AI release message
+        id: ai_message
+        if: env.GEMINI_API_KEY != ''
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          VERSION_TITLE="${{ steps.get_release.outputs.version_title }}"
+          MENTION_ROLE="${{ secrets.DISCORD_MENTION_ROLE }}"
+          RELEASE_URL="https://github.com/${{ github.repository }}/releases/$RELEASE_TAG"
+          
+          # Fetch release body for context
+          RELEASE_DATA=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            https://api.github.com/repos/${{ github.repository }}/releases/tags/$RELEASE_TAG)
+          RELEASE_BODY=$(echo "$RELEASE_DATA" | jq -r '.body // "No release notes available."')
+          ESCAPED_BODY=$(jq -Rs . <<< "$RELEASE_BODY")
+          
+          PROMPT="You are a release announcer. Generate a concise Discord release announcement for ArchiveTune Nightly.
+
+          Requirements:
+          - Total message must be under 2000 characters
+          - First line must be: \"# ArchiveTune Nightly $VERSION_TITLE has been released\"
+          - Use Discord-compatible Markdown formatting (same as GitHub Markdown)
+          - Include a link to the release: $RELEASE_URL
+          - Include this role mention somewhere in the message: $MENTION_ROLE
+          - Summarize the key changes concisely from the release notes below
+          - Keep it friendly and exciting, but professional
+          
+          Release notes:
+          $ESCAPED_BODY"
+          
+          MAX_RETRIES=3
+          RETRY_COUNT=0
+          WAIT_TIME=15
+          
+          while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GEMINI_API_KEY" \
+              -H 'Content-Type: application/json' \
+              -d "{
+                \"contents\": [{
+                  \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
+                }]
+              }")
+            
+            ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
+            
+            if [ -z "$ERROR" ]; then
+              break
+            fi
+            
+            if echo "$RESPONSE" | jq -e '.error.code == 429' > /dev/null; then
+              echo "Rate limit exceeded (429). Retrying in ${WAIT_TIME}s... (Attempt $((RETRY_COUNT + 1))/$MAX_RETRIES)"
+              sleep $WAIT_TIME
+              RETRY_COUNT=$((RETRY_COUNT + 1))
+              WAIT_TIME=$((WAIT_TIME * 2))
+            else
+              echo "API Error: $ERROR"
+              break
+            fi
+          done
+          
+          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+          
+          if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
+            echo "AI message generation failed or returned empty."
+            echo "generated_message=" >> $GITHUB_OUTPUT
+          else
+            AI_TEXT="${AI_TEXT:0:2000}"
+            {
+              echo "generated_message<<EOF"
+              echo "$AI_TEXT"
+              echo "EOF"
+            } >> $GITHUB_OUTPUT
+            echo "✓ AI release message generated successfully"
+          fi
+
       - name: Send Discord notification
         run: |
           VERSION_TITLE="${{ steps.get_release.outputs.version_title }}"
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
+          AI_MESSAGE="${{ steps.ai_message.outputs.generated_message }}"
           
-          # Construct the message
-          MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
+          if [ -n "$AI_MESSAGE" ]; then
+            MESSAGE="$AI_MESSAGE"
+          else
+            MESSAGE="# New daily version of __ArchiveTune Nightly__ has been released.
+            
+            > - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
+            > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
+            > - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
+          fi
           
-          > - Ohaiyo, **ArchiveTune $VERSION_TITLE** has been released. You can view changlog and download inside **ArchiveTune Nightly** app or with this link below.
-          > - **Link:** https://github.com/${{ github.repository }}/releases/$RELEASE_TAG
-          > - **Mention:** ${{ secrets.DISCORD_MENTION_ROLE }}"
-          
-          # Create JSON payload using jq to avoid escaping issues
           PAYLOAD=$(jq -n --arg msg "$MESSAGE" '{content: $msg}')
           
-          # Send to Discord
           RESPONSE=$(curl -s -w "\n%{http_code}" -H "Content-Type: application/json" -d "$PAYLOAD" "${{ secrets.WEBHOOK_URL }}")
           HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
           
