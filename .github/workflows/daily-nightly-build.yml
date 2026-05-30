@@ -356,9 +356,6 @@ jobs:
           ${{ steps.ai_summary.outputs.summary }}
 
           ${{ steps.changelog.outputs.changelog }}
-
-          > [!NOTE]
-          > If this version broken something, you can create this [issue](https://github.com/${{ github.repository }}/issues/new?template=report-version-broken.yml). Thanks you.
           RELEASE_BODY_EOF
 
       - name: 📦 Create release
