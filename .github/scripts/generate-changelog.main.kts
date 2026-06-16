@@ -83,7 +83,13 @@ fun fetchCommitsSinceSha(owner: String, repo: String, branch: String, sha: Strin
     val json = fetch(url)
     val root = gson.fromJson(json, JsonObject::class.java)
     if (root.has("commits")) {
-        return root.getAsJsonArray("commits")
+        val commits = root.getAsJsonArray("commits")
+        // Compare API returns oldest first; reverse to match commits API convention (newest first)
+        val reversed = JsonArray()
+        for (i in commits.size() - 1 downTo 0) {
+            reversed.add(commits[i])
+        }
+        return reversed
     }
     throw RuntimeException("No commits field in compare response: $json")
 }
@@ -106,7 +112,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
         }
     }
     
-    // GitHub API returns commits in reverse chronological order (newest first)
+    // Commits are ordered newest-first (both APIs normalized to this convention)
     val commitList = commits.map { it.asJsonObject }
 
     // Date and time format
@@ -164,7 +170,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             }
 
             // Create log line
-            changelogEntries.append("- `$date`: [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
+            changelogEntries.append("- [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
             continue
