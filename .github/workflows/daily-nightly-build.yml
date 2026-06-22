@@ -43,7 +43,7 @@ jobs:
             abi: universal
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: ArchiveTuneApp/ArchiveTune
           ref: dev
@@ -248,7 +248,7 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ secrets.PAT_TOKEN || github.token }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           repository: ${{ github.repository }}
           ref: main
