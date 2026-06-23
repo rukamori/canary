@@ -287,7 +287,7 @@ jobs:
 
       - name: AI Summary
         id: ai_summary
-        if: env.GEMINI_API_KEY != ''
+        if: env.OPENROUTER_API_KEY != ''
         run: |
           ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
 
@@ -313,12 +313,12 @@ jobs:
           WAIT_TIME=15
 
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GEMINI_API_KEY" \
-              -H 'Content-Type: application/json' \
+            RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $OPENROUTER_API_KEY" \
               -d "{
-                \"contents\": [{
-                  \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
-                }]
+                \"model\": \"meta-llama/llama-3.3-70b-instruct:free\",
+                \"messages\": [{\"role\": \"user\", \"content\": $(echo "$PROMPT" | jq -Rs .)}]
               }")
 
             ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
@@ -338,7 +338,7 @@ jobs:
             fi
           done
 
-          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+          AI_TEXT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
           if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
             echo "AI summarization failed or returned empty. Response: $RESPONSE"
@@ -353,7 +353,7 @@ jobs:
             } >> $GITHUB_OUTPUT
           fi
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
 
       - name: Download APK Artifacts
         uses: actions/download-artifact@v8
@@ -424,9 +424,9 @@ jobs:
 
       - name: 🤖 Generate AI release message
         id: ai_message
-        if: env.GEMINI_API_KEY != ''
+        if: env.OPENROUTER_API_KEY != ''
         env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           RELEASE_TAG="${{ steps.get_release.outputs.release_tag }}"
           VERSION_TITLE="${{ steps.get_release.outputs.version_title }}"
@@ -459,12 +459,12 @@ jobs:
           WAIT_TIME=15
 
           while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
-            RESPONSE=$(curl -s -X POST "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=$GEMINI_API_KEY" \
-              -H 'Content-Type: application/json' \
+            RESPONSE=$(curl -s https://openrouter.ai/api/v1/chat/completions \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer $OPENROUTER_API_KEY" \
               -d "{
-                \"contents\": [{
-                  \"parts\":[{\"text\": $(echo "$PROMPT" | jq -Rs .)}]
-                }]
+                \"model\": \"meta-llama/llama-3.3-70b-instruct:free\",
+                \"messages\": [{\"role\": \"user\", \"content\": $(echo "$PROMPT" | jq -Rs .)}]
               }")
 
             ERROR=$(echo "$RESPONSE" | jq -r '.error.message // empty')
@@ -484,7 +484,7 @@ jobs:
             fi
           done
 
-          AI_TEXT=$(echo "$RESPONSE" | jq -r '.candidates[0].content.parts[0].text // empty')
+          AI_TEXT=$(echo "$RESPONSE" | jq -r '.choices[0].message.content // empty')
 
           if [ -z "$AI_TEXT" ] || [ "$AI_TEXT" = "null" ]; then
             echo "AI message generation failed or returned empty."
