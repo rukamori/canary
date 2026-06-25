@@ -317,7 +317,7 @@ jobs:
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $OPENROUTER_API_KEY" \
               -d "{
-                \"model\": \"meta-llama/llama-3.3-70b-instruct:free\",
+                \"model\": \"google/gemma-4-31b-it:free\",
                 \"messages\": [{\"role\": \"user\", \"content\": $(echo "$PROMPT" | jq -Rs .)}]
               }")
 
@@ -463,7 +463,7 @@ jobs:
               -H "Content-Type: application/json" \
               -H "Authorization: Bearer $OPENROUTER_API_KEY" \
               -d "{
-                \"model\": \"meta-llama/llama-3.3-70b-instruct:free\",
+                \"model\": \"google/gemma-4-31b-it:free\",
                 \"messages\": [{\"role\": \"user\", \"content\": $(echo "$PROMPT" | jq -Rs .)}]
               }")
 
