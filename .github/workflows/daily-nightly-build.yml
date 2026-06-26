@@ -11,7 +11,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build Release APKs (${{ matrix.distribution }}-${{ matrix.device }}-${{ matrix.abi }})
+    name: Build (${{ matrix.distribution }}-${{ matrix.device }}-${{ matrix.abi }})
     if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
     runs-on: ubuntu-latest
     outputs:
