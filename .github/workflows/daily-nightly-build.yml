@@ -23,25 +23,17 @@ jobs:
     strategy:
       matrix:
         distribution: [gms, foss]
-        include:
-          - device: mobile
-            deviceName: Mobile
-            abi: arm64
-          - device: mobile
-            deviceName: Mobile
-            abi: armeabi
-          - device: mobile
-            deviceName: Mobile
-            abi: x86
-          - device: mobile
-            deviceName: Mobile
-            abi: x86_64
-          - device: mobile
-            deviceName: Mobile
-            abi: universal
+        device: [mobile, tv]
+        abi: [arm64, armeabi, x86, x86_64, universal]
+        exclude:
           - device: tv
-            deviceName: Tv
-            abi: universal
+            abi: arm64
+          - device: tv
+            abi: armeabi
+          - device: tv
+            abi: x86
+          - device: tv
+            abi: x86_64
 
     steps:
       - uses: actions/checkout@v7
@@ -94,7 +86,7 @@ jobs:
           DEVICE="${{ matrix.device }}"
           ABI="${{ matrix.abi }}"
           DISTRIBUTION="${{ matrix.distribution }}"
-          DEVICE_CAP="${{ matrix.deviceName }}"
+          DEVICE_CAP="$(tr '[:lower:]' '[:upper:]' <<< "${DEVICE:0:1}")${DEVICE:1}"
           ABI_CAP="$(tr '[:lower:]' '[:upper:]' <<< "${ABI:0:1}")${ABI:1}"
           DIST_CAP="$(tr '[:lower:]' '[:upper:]' <<< "${DISTRIBUTION:0:1}")${DISTRIBUTION:1}"
           echo "device=$DEVICE" >> "$GITHUB_OUTPUT"
