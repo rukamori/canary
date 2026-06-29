@@ -127,7 +127,8 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
             val sha = commit.get("sha").asString
             val commitDetails = commit.getAsJsonObject("commit")
             
-            var message = commitDetails.get("message").asString
+            val fullMessage = commitDetails.get("message").asString
+            var message = fullMessage
             if (message.isEmpty()) {
                 message = "(no message)"
             } else {
@@ -141,8 +142,8 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 "[#$number](https://github.com/ArchiveTuneApp/ArchiveTune/issues/$number)"
             }
 
-            // Get author information (preferably GitHub login, fallback to Git username)
-            val author = try {
+            // Get primary author (preferably GitHub login, fallback to Git username)
+            val primaryAuthor = try {
                 if (commit.has("author") && !commit.get("author").isJsonNull) {
                     val authorObj = commit.getAsJsonObject("author")
                     if (authorObj.has("login") && !authorObj.get("login").isJsonNull) {
@@ -157,8 +158,16 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 "Unknown"
             }
 
-            // Update commit counts
-            authorCommitCounts[author] = (authorCommitCounts[author] ?: 0) + 1
+            // Parse co-authors from Co-authored-by trailers
+            val coAuthors = parseCoAuthors(fullMessage)
+
+            // Combine primary + co-authors, deduplicated
+            val allAuthors = (listOf(primaryAuthor) + coAuthors).distinct()
+
+            // Update commit counts for ALL authors
+            for (author in allAuthors) {
+                authorCommitCounts[author] = (authorCommitCounts[author] ?: 0) + 1
+            }
 
             // Format date and time
             val date = try {
@@ -169,8 +178,9 @@ fun formatChangelog(commits: JsonArray, logOutput: String): String {
                 "Unknown Date"
             }
 
-            // Create log line
-            changelogEntries.append("- [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by (@$author)\n")
+            // Create log line with all authors
+            val authorsStr = allAuthors.joinToString(", ") { "@$it" }
+            changelogEntries.append("- [`${sha.take(7)}`](https://github.com/ArchiveTuneApp/ArchiveTune/commit/$sha) - **\"$message\"** by ($authorsStr)\n")
         } catch (e: Exception) {
             log("Warning: Error processing commit: ${e.message}")
             continue
@@ -220,6 +230,24 @@ fun getCommitAuthorName(commitDetails: JsonObject): String {
     }
     return authorObj.get("name").asString
 }
+
+fun parseCoAuthors(fullMessage: String): List<String> {
+    val coAuthorRegex = "Co-authored-by:\\s*(.+)\\s*<([^>]+)>".toRegex()
+    return coAuthorRegex.findAll(fullMessage).map { match ->
+        val name = match.groupValues[1].trim()
+        val email = match.groupValues[2].trim()
+        // Extract GitHub username from noreply email (e.g. 12345+username@users.noreply.github.com)
+        val noreplyMatch = "\\d+\\+(.+)@users\\.noreply\\.github\\.com".toRegex().matchEntire(email)
+        if (noreplyMatch != null) {
+            noreplyMatch.groupValues[1]
+        } else {
+            // Fallback: use the name part, sanitized
+            name.replace("\\s+".toRegex(), "")
+        }
+    }.distinct().toList()
+}
+
+
 
 // --- Main Execution ---
 
