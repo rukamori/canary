@@ -291,7 +291,19 @@ jobs:
           ESCAPED_CHANGELOG=$(jq -Rs . < changelog.md)
 
           PROMPT="Summarize the following commit messages into a clean, professional, and categorized release note.
-          Use categories like ✨ Features, 🐞 Bug Fixes, 🚀 Improvements, and 🧹 Refactor.
+          Use these categories (only include categories that have relevant commits):
+          - ✨ Features — new functionality
+          - 🐞 Bug Fixes — fixes for issues
+          - 🚀 Improvements — enhancements to existing features
+          - 🎨 UI — visual changes, layouts, themes, animations
+          - 🎵 Audio — playback, streaming, audio-related changes
+          - 🌐 Translation — localization, language updates
+          - ⚡ Performance — speed, memory, efficiency improvements
+          - 🔧 Logic — business logic, data handling, backend changes
+          - 🧹 Refactor — code restructuring without behavior change
+          - 📦 Dependencies — library updates, version bumps
+          - 🛡️ Security — vulnerability fixes, permission changes
+          - 📝 Docs — documentation, comments, README updates
           Keep it concise and highlight the most important changes.
 
           Additionally, look at the '## 🏆 MVP Committer' section in the provided text.
