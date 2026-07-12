@@ -497,7 +497,7 @@ jobs:
 
       - name: 👍 Your fork, your documentation
         run: |
-          sed -i 's|rukamori/daily-nightly|${{ github.repository }}|g' README.md
+          sed -i 's|rukamori/canary|${{ github.repository }}|g' README.md
 
       - name: 📖 Read current README values
         id: read-current
@@ -554,7 +554,7 @@ jobs:
             printf '%s\n' "$content" > README.md
           fi
 
-          sed -i "s|github.com/rukamori/daily-nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
+          sed -i "s|github.com/rukamori/canary/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
 
       - name: 🔐 Update certificate fingerprints from signed APK
         env:
