@@ -169,7 +169,7 @@ fun formatChangelog(commits: JsonArray, logOutput: String, owner: String, repo: 
             val issueRegex = "#(\\d+)".toRegex()
             message = issueRegex.replace(message) { matchResult ->
                 val number = matchResult.groupValues[1]
-                "[#$number](https://github.com/ArchiveTuneApp/ArchiveTune/issues/$number)"
+                "[#$number](https://github.com/rukamori/ArchiveTune/issues/$number)"
             }
 
             // Get primary author (preferably GitHub login, fallback to Git username)
