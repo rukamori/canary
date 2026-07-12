@@ -310,7 +310,7 @@ fun parseCoAuthors(fullMessage: String): List<String> {
 
 fun main() {
     try {
-        val repoPath = System.getenv("REPO_PATH") ?: "ArchiveTuneApp/ArchiveTune"
+        val repoPath = System.getenv("REPO_PATH") ?: "rukamori/ArchiveTune"
         val branch = System.getenv("BRANCH") ?: "dev"
         
         if (!repoPath.contains("/")) {
