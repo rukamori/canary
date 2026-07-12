@@ -42,7 +42,7 @@ jobs:
             echo "SKIP=false" >> $GITHUB_OUTPUT
           else
             echo "Checking commits since $SINCE_SHA"
-            RESPONSE=$(curl -s "https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/compare/$SINCE_SHA...dev")
+            RESPONSE=$(curl -s "https://api.github.com/repos/rukamori/ArchiveTune/compare/$SINCE_SHA...dev")
             STATUS=$(echo "$RESPONSE" | jq -r '.status // "error"')
             AHEAD_BY=$(echo "$RESPONSE" | jq -r '.ahead_by // 0')
 
@@ -52,7 +52,7 @@ jobs:
               echo "Compare API failed. Falling back to 24h check."
               SINCE=$(date -u -d "yesterday 00:00" +"%Y-%m-%dT%H:%M:%SZ")
               UNTIL=$(date -u -d "00:00" +"%Y-%m-%dT%H:%M:%SZ")
-              RESPONSE=$(curl -s "https://api.github.com/repos/ArchiveTuneApp/ArchiveTune/commits?sha=dev&since=$SINCE&until=$UNTIL")
+              RESPONSE=$(curl -s "https://api.github.com/repos/rukamori/ArchiveTune/commits?sha=dev&since=$SINCE&until=$UNTIL")
               COUNT=$(echo "$RESPONSE" | jq '. | length')
               echo "Found $COUNT commits in last 24h."
               if [ "$COUNT" -gt 0 ]; then
