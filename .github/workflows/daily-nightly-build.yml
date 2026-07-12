@@ -38,7 +38,7 @@ jobs:
     steps:
       - uses: actions/checkout@v7
         with:
-          repository: ArchiveTuneApp/ArchiveTune
+          repository: rukamori/ArchiveTune
           ref: dev
           token: ${{ secrets.GITHUB_TOKEN || secrets.PAT_TOKEN }}
           submodules: true
@@ -266,7 +266,7 @@ jobs:
       - name: Generate changelog
         run: kotlin .github/scripts/generate-changelog.main.kts
         env:
-          REPO_PATH: "ArchiveTuneApp/ArchiveTune"
+          REPO_PATH: "rukamori/ArchiveTune"
           BRANCH: "dev"
           SINCE_SHA: ${{ needs.build.outputs.since_sha }}
 
@@ -497,7 +497,7 @@ jobs:
 
       - name: 👍 Your fork, your documentation
         run: |
-          sed -i 's|ArchiveTuneApp/daily-nightly|${{ github.repository }}|g' README.md
+          sed -i 's|rukamori/daily-nightly|${{ github.repository }}|g' README.md
 
       - name: 📖 Read current README values
         id: read-current
@@ -554,7 +554,7 @@ jobs:
             printf '%s\n' "$content" > README.md
           fi
 
-          sed -i "s|github.com/ArchiveTuneApp/daily-nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
+          sed -i "s|github.com/rukamori/daily-nightly/releases/latest|github.com/${{ github.repository }}/releases/latest|g" README.md
 
       - name: 🔐 Update certificate fingerprints from signed APK
         env:
